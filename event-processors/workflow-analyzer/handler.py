@@ -1,6 +1,7 @@
 """
 Lambda handler for workflow analysis.
 """
+import base64
 import json
 import os
 import sys
@@ -50,7 +51,6 @@ class GitHubClient:
         data = response.json()
 
         # GitHub API returns content as base64
-        import base64
         content = base64.b64decode(data['content']).decode('utf-8')
         return content
 

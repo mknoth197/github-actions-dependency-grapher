@@ -17,13 +17,17 @@ export class SNSPublisher {
     }
 
     const messageGroupId = `${event.repository.fullName}-${event.workflow.path}`;
+    const isFifoTopic = this.topicArn.endsWith('.fifo');
 
     try {
       const command = new PublishCommand({
         TopicArn: this.topicArn,
         Message: JSON.stringify(event),
-        MessageGroupId: messageGroupId,
-        MessageDeduplicationId: `${event.commit.sha}-${event.timestamp}`,
+        // FIFO-specific parameters (only set for FIFO topics)
+        ...(isFifoTopic && {
+          MessageGroupId: messageGroupId,
+          MessageDeduplicationId: `${event.commit.sha}-${event.timestamp}`,
+        }),
       });
 
       await this.client.send(command);

@@ -105,7 +105,8 @@ class WorkflowAnalyzer:
             return None  # Skip local actions for now
 
         # Parse action reference (e.g., "actions/checkout@v3")
-        parts = uses.split('@')
+        # Split on '@' with max split of 1 to handle edge cases like org/action@v1@sha
+        parts = uses.split('@', 1)
         if len(parts) != 2:
             return WorkflowDependency(
                 type='action',
